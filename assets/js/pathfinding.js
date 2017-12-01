@@ -175,6 +175,8 @@
 
 			drawParent(current);
 
+			current.show('red');
+
 			closedSet.push(openSet.splice(openSet.indexOf(current), 1)[0]);
 
 			var neighbors = current.neighbors;
