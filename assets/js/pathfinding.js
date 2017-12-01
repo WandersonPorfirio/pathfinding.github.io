@@ -173,9 +173,9 @@
 				return console.log('Done!');
 			};
 
-			drawParent(current);
-
 			current.show('red');
+
+			drawParent(current);
 
 			closedSet.push(openSet.splice(openSet.indexOf(current), 1)[0]);
 
