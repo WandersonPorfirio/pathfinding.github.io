@@ -7,12 +7,6 @@
 	var canvas, ctx, tileSize, tabuleiro;
 
 
-	var endPoint = {
-		x: Math.floor(Math.random() * rows),
-		y: Math.floor(Math.random() * cols)
-	};
-
-
 	Spot.prototype.show = function (newColor) {
 		drawRect(this.x * this.w, this.y * this.w, this.w, this.w, newColor || '#fff');
 	};
@@ -35,7 +29,7 @@
 		tabuleiro.forEach(row => row.forEach(celula => celula.defineNeighbors(tabuleiro)));
 
 		start = tabuleiro[0][0];
-		end   = tabuleiro[endPoint.x][endPoint.y];
+		end   = tabuleiro[cols - 1][rows - 1];
 
 		openSet.push(start);
 
@@ -81,7 +75,7 @@
 			posX = Math.floor(Math.random() * rows);
 			posY = Math.floor(Math.random() * cols);
 
-			if ((posX || posY) && (posX != endPoint.x || posY != endPoint.y) && !matriz[posY][posX].wall) {
+			if ((posX || posY) && (posX != rows - 1 || posY != cols - 1) && !matriz[posY][posX].wall) {
 				matriz[posY][posX].wall = 1;
 			};
 		};
