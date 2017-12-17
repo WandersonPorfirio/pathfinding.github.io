@@ -6,7 +6,6 @@
 
 	var canvas, ctx, tileSize, tabuleiro;
 
-
 	Spot.prototype.show = function (newColor) {
 		drawRect(this.x * this.w, this.y * this.w, this.w, this.w, newColor || '#fff');
 	};
