@@ -10,9 +10,7 @@
 		this.g = 0;
 
 		this.wall = 0;
-
 		this.neighbors = [];
-
 		this.parent = undefined;
 
 		this.defineNeighbors = function (matriz) {
