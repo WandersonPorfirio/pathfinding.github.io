@@ -50,11 +50,6 @@
 			d2 = Math.pow(Math.abs(a.y - b.y), 2);
 
 		return Math.sqrt(d1 + d2); // Euclidian Distance
-
-		// let d1 = Math.abs(a.x - b.x),
-		// 	d2 = Math.abs(a.y - b.y);
-
-		// return d1 + d2; // Manhattan Distance
 	};
 
 
