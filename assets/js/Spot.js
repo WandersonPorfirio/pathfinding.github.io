@@ -24,7 +24,7 @@
 				for (let j = -1; j <= 1; j++) {
 					let neighbor = matriz[y + i][x + j];
 					if (!neighbor || (i % 2) && (j % 2) || neighbor.wall) continue;
-					if (neighbor !== this) this.neighbors.push(neighbor);
+					if (!(!j && !i)) this.neighbors.push(neighbor);
 				};
 			};
 		};
