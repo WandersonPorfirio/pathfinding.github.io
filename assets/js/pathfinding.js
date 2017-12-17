@@ -1,6 +1,6 @@
 (function () {
 
-	var rows = 50, cols = 50, barreiras_count = 800;
+	var rows = 50, cols = 50, barreiras_count = 1000;
 
 	var start, end, openSet = [], closedSet = [];
 
@@ -22,11 +22,19 @@
 
 		ctx = canvas.getContext('2d');
 
+		ctx.lineWidth = 3;
+		ctx.lineCap = 'round';
+
 		tileSize = canvas.width / rows;
 
-		tabuleiro = preencher_matriz(rows, cols);
+		inicializar_busca();
 
-		tabuleiro.forEach(row => row.forEach(celula => celula.defineNeighbors(tabuleiro)));
+		return console.log('A*');
+	};
+
+
+	function inicializar_busca () {
+		tabuleiro = preencher_matriz(rows, cols);
 
 		start = tabuleiro[0][0];
 		end   = tabuleiro[cols - 1][rows - 1];
@@ -34,27 +42,27 @@
 		openSet.push(start);
 
 		update();
-
-		return console.log('A*');
 	};
 
 
 	function heuristic (a, b) {
-		var d1 = Math.abs(a.x - b.x);
-		var d2 = Math.abs(b.y - b.y);
-		return d1 + d2; // Manhattan Distance
+		let d1 = Math.pow(Math.abs(a.x - b.x), 2),
+			d2 = Math.pow(Math.abs(a.y - b.y), 2);
 
-		// d1 = Math.pow(d1, 2);
-		// d2 = Math.pow(d2, 2);
-		// return Math.sqrt(d1 + d2); // Euclidian Distance
+		return Math.sqrt(d1 + d2); // Euclidian Distance
+
+		// let d1 = Math.abs(a.x - b.x),
+		// 	d2 = Math.abs(a.y - b.y);
+
+		// return d1 + d2; // Manhattan Distance
 	};
 
 
 	function preencher_matriz (w, h) {
-		var matriz = [];
+		let matriz = [];
 
 		while (h--) {
-			var reserveX = 0, row = [];
+			let reserveX = 0, row = [];
 
 			while (reserveX < w) {
 				row.push(new Spot(reserveX, h, tileSize));
@@ -69,32 +77,45 @@
 
 
 	function lancar_barreiras (matriz) {
-		var posX, posY;
+		let posX, posY, randomCell;
 
 		while (barreiras_count > quantidade_barreiras(matriz)) {
 			posX = Math.floor(Math.random() * rows);
 			posY = Math.floor(Math.random() * cols);
 
-			if ((posX || posY) && (posX != rows - 1 || posY != cols - 1) && !matriz[posY][posX].wall) {
-				matriz[posY][posX].wall = 1;
+			randomCell = matriz[posY][posX];
+
+			if ((posX || posY) && (posX != rows - 1 || posY != cols - 1) && !randomCell.wall) {
+				randomCell.wall = 1;
 			};
 		};
+
+		return setEveryNeighbor(matriz);
+	};
+
+
+	function quantidade_barreiras (matriz) {
+		var quantidade_atual = 0;
+
+		matriz.forEach(row => {
+			quantidade_atual += row.filter(celula => celula.wall).length; // quantos elementos em cada linha
+		});
+
+		return quantidade_atual;
+	};
+
+
+	function setEveryNeighbor (matriz) {
+		matriz.forEach(row => {
+			row.forEach(celula => celula.defineNeighbors(matriz));
+		});
 
 		return matriz;
 	};
 
 
-	function quantidade_barreiras (matriz) {
-		var qnt = 0;
-
-		matriz.forEach(row => qnt += row.filter(celula => celula.wall).length);
-
-		return qnt;
-	};
-
-
 	function getTheLowestF (matriz) {
-		var lower;
+		let lower;
 
 		matriz.forEach(celula => {
 			if (!lower || lower.f > celula.f) lower = celula;
@@ -104,27 +125,22 @@
 	};
 
 
-	function drawParent (_el, slowly) {
-		if (_el.parent) {
-			route(_el, _el.parent);
-			slowly ? setTimeout(() => drawParent(_el.parent, slowly), 20) : drawParent(_el.parent);
+	function drawParent (_el) {
+		ctx.beginPath();
+		ctx.strokeStyle = 'red';
+		while (_el.parent) {
+			_el = route(_el, _el.parent);
 		};
+		ctx.closePath();
+		ctx.stroke();
 	};
 
 
 	function route (from, to) {
-		ctx.beginPath();
-
-		ctx.lineWidth = 3;
-		ctx.lineCap = 'round';
-		ctx.strokeStyle = '#F00';
-
 		ctx.moveTo(from.x * from.w + (from.w * 0.5), from.y * from.w + (from.w * 0.5));
 		ctx.lineTo(to.x * to.w + (to.w * 0.5), to.y * to.w + (to.w * 0.5));
 
-		ctx.closePath();
-
-		ctx.stroke();
+		return to;
 	};
 
 
@@ -136,16 +152,16 @@
 
 	function drawRect (x, y, w, h, color) {
 		ctx.fillStyle = color;
-		ctx.fillRect(x + .5, y + .5, w - 1, h - 1);
+		ctx.fillRect(x, y, w, h);
 	};
 
 
 	function draw () {
-		clearCanvas('#e0e0e0');
+		clearCanvas('#fff');
 
 		tabuleiro.forEach((row, y) => {
 			row.forEach((celula, x) => {
-				celula.show(celula.wall ? '#000' : '#fff');
+				if (celula.wall) celula.show('black');
 			});
 		});
 
@@ -153,40 +169,30 @@
 	};
 
 
-	function reload () {
-		location = '';
-	};
-
-
-
 	function update (time = 0) {
 		draw();
-				
 
 		if (openSet.length) {
-			var current = getTheLowestF(openSet);
+			var currentNode = getTheLowestF(openSet);
 
-			if (current === end) {
-				draw();
+			if (currentNode === end) {
 				openSet = [];
-				drawParent(current, 1);
-				return console.log('Done!');
+				return drawParent(currentNode);
 			};
 
-			current.show('red');
+			currentNode.show('red');
+			drawParent(currentNode);
 
-			drawParent(current);
+			closedSet.push(openSet.splice(openSet.indexOf(currentNode), 1)[0]);
 
-			closedSet.push(openSet.splice(openSet.indexOf(current), 1)[0]);
+			let neighbors = currentNode.neighbors;
 
-			var neighbors = current.neighbors;
+			for (let i = 0, len = neighbors.length; i < len; i++) {
+				let neighbor = neighbors[i];
 
-			for (var i = 0; i < neighbors.length; i++) {
-				var neighbor = neighbors[i];
+				if (closedSet.indexOf(neighbor) >= 0) continue;
 
-				if (closedSet.indexOf(neighbor) >= 0 || neighbor.wall) continue;
-
-				var gScore = current.g + 1, betterGScore = false;
+				let gScore = currentNode.g + 1, betterGScore = false;
 
 				if (openSet.indexOf(neighbor) === -1) {
 					betterGScore = true;
@@ -197,14 +203,16 @@
 				};
 
 				if (betterGScore) {
-					neighbor.parent = current;
+					neighbor.parent = currentNode;
 					neighbor.g = gScore;
 					neighbor.f = neighbor.g + neighbor.h;
 				};
 			};
 
 			requestAnimationFrame(update, canvas);
-		} else setTimeout(reload, 10);
+		} else {
+			inicializar_busca();
+		};
 	};
 
 

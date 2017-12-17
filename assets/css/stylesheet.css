@@ -10,6 +10,7 @@ html, body {
 
 body {
 	position: relative;
+	background-color: gainsboro;
 }
 
 canvas {

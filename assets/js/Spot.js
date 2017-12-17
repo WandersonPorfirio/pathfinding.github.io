@@ -11,17 +11,21 @@ function Spot (x, y, w) {
 
 	this.wall = 0;
 
-	this.parent = null;
-
 	this.neighbors = [];
 
-	this.defineNeighbors = function (matriz) {
-		var x = this.x;
-		var y = this.y;
+	this.parent = undefined;
 
-		if (x < matriz[y].length - 1 && !matriz[y][x + 1].wall) this.neighbors.push(matriz[y][x + 1]);
-		if (y < matriz.length - 1 && !matriz[y + 1][x].wall) this.neighbors.push(matriz[y + 1][x]);
-		if (x > 0 && !matriz[y][x - 1].wall) this.neighbors.push(matriz[y][x - 1]);
-		if (y > 0 && !matriz[y - 1][x].wall) this.neighbors.push(matriz[y - 1][x]);
+	this.defineNeighbors = function (matriz) {
+		let x = this.x,
+			y = this.y;
+
+		for (let i = -1; i <= 1; i++) {
+			if (!matriz[y + i]) continue;
+			for (let j = -1; j <= 1; j++) {
+				let neighbor = matriz[y + i][x + j];
+				if (!neighbor || (i % 2) && (j % 2) || neighbor.wall) continue;
+				if (neighbor !== this) this.neighbors.push(neighbor);
+			};
+		};
 	};
 };
