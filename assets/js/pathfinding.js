@@ -205,6 +205,7 @@
 
 			requestAnimationFrame(update, canvas);
 		} else {
+			// busca encerrada sem resultado
 			inicializar_busca();
 		};
 	};
