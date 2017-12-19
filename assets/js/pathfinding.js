@@ -119,9 +119,10 @@
 	};
 
 
-	function drawParent (_el) {
+	function drawParent (_el, color) {
 		ctx.beginPath();
-		ctx.strokeStyle = 'red';
+		ctx.strokeStyle = color;
+		[start, end, _el].forEach(celula => celula.show(color));
 		while (_el.parent) {
 			_el = route(_el, _el.parent);
 		};
@@ -158,8 +159,6 @@
 				if (celula.wall) celula.show('black');
 			});
 		});
-
-		[start, end].forEach(celula => celula.show('#F00')); // from and to points
 	};
 
 
@@ -171,11 +170,10 @@
 
 			if (currentNode === end) {
 				openSet = [];
-				return drawParent(currentNode);
+				return drawParent(currentNode, 'green');
 			};
 
-			currentNode.show('red');
-			drawParent(currentNode);
+			drawParent(currentNode, 'red');
 
 			closedSet.push(openSet.splice(openSet.indexOf(currentNode), 1)[0]);
 
