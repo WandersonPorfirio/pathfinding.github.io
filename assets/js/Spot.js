@@ -1,26 +1,28 @@
 
 
-	function Spot (x, y, w) {
-		this.x = x;
-		this.y = y;
-		this.w = w;
+	class Spot  {
+		contructor (x, y, w) {
+			this.x = x;
+			this.y = y;
+			this.w = w;
 
-		this.h = 0;
-		this.f = 0;
-		this.g = 0;
+			this.h = 0;
+			this.f = 0;
+			this.g = 0;
 
-		this.wall = 0;
-		this.neighbors = [];
-		this.parent = undefined;
+			this.wall = 0;
+			this.neighbors = [];
+			this.parent = undefined;
+		};
 
-		this.defineNeighbors = function (matriz) {
+		defineNeighbors (matriz) {
 			let x = this.x,
-				y = this.y;
+				y = this.y, neighbor;
 
 			for (let i = -1; i <= 1; i++) {
 				if (!matriz[y + i]) continue;
 				for (let j = -1; j <= 1; j++) {
-					let neighbor = matriz[y + i][x + j];
+					neighbor = matriz[y + i][x + j];
 					if (!neighbor || (i % 2) && (j % 2) || neighbor.wall) continue;
 					if (!(!j && !i)) this.neighbors.push(neighbor);
 				};
