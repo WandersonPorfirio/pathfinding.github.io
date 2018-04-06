@@ -6,9 +6,6 @@
 
 	var canvas, ctx, tileSize, tabuleiro;
 
-	Spot.prototype.show = function (newColor) {
-		drawRect(this.x * this.w, this.y * this.w, this.w, this.w, newColor || '#fff');
-	};
 
 
 	function createCanvas (w, h) {
@@ -73,7 +70,7 @@
 	function lancar_barreiras (matriz) {
 		let posX, posY, randomCell;
 
-		while (barreiras_count > quantidade_barreiras(matriz)) {
+		do {
 			posX = Math.floor(Math.random() * rows);
 			posY = Math.floor(Math.random() * cols);
 
@@ -82,7 +79,7 @@
 			if ((posX || posY) && (posX != rows - 1 || posY != cols - 1) && !randomCell.wall) {
 				randomCell.wall = 1;
 			};
-		};
+		} while (barreiras_count > quantidade_barreiras(matriz));
 
 		return setEveryNeighbor(matriz);
 	};
@@ -101,7 +98,7 @@
 
 	function setEveryNeighbor (matriz) {
 		matriz.forEach(row => {
-			row.forEach(celula => celula.defineNeighbors(matriz));
+			row.forEach(celula => !celula.wall && celula.defineNeighbors(matriz));
 		});
 
 		return matriz;
@@ -111,8 +108,8 @@
 	function getTheLowestF (matriz) {
 		let lower;
 
-		matriz.forEach(celula => {
-			if (!lower || lower.f > celula.f) lower = celula;
+		matriz.forEach(cell => {
+			if (!lower || lower.f > cell.f) lower = cell;
 		});
 
 		return lower;
@@ -122,7 +119,7 @@
 	function drawParent (_el, color) {
 		ctx.beginPath();
 		ctx.strokeStyle = color;
-		[start, end, _el].forEach(celula => celula.show(color));
+		[start, end, _el].forEach(celula => celula.draw(drawRect, color));
 		while (_el.parent) {
 			_el = route(_el, _el.parent);
 		};
@@ -132,10 +129,30 @@
 
 
 	function route (from, to) {
-		ctx.moveTo(from.x * from.w + (from.w * 0.5), from.y * from.w + (from.w * 0.5));
-		ctx.lineTo(to.x * to.w + (to.w * 0.5), to.y * to.w + (to.w * 0.5));
+		if (to.parent) {
+			if (from.y == to.parent.y && to.x == to.parent.x + 1 ||
+				from.y == to.parent.y && to.x == to.parent.x - 1 ||
+				from.x == to.parent.x && to.y == to.parent.y + 1 ||
+				from.x == to.parent.x && to.y == to.parent.y - 1) {
+				// deixando o caminho mais curto
+				return route(from, to.parent);
+			};
+		};
+
+		// ctx.moveTo(from.x * from.w + (from.w * 0.5), from.y * from.w + (from.w * 0.5));
+		// ctx.lineTo(to.x * to.w + (to.w * 0.5), to.y * to.w + (to.w * 0.5));
+		lineSet(
+			{ x: from.x * from.w + (from.w * 0.5), y: from.y * from.w + (from.w * 0.5) },
+			{ x: to.x * to.w + (to.w * 0.5), y: to.y * to.w + (to.w * 0.5) }
+		);
 
 		return to;
+	};
+
+
+	function lineSet (from, to) {
+		ctx.moveTo(from.x, from.y);
+		ctx.lineTo(to.x, to.y);
 	};
 
 
@@ -154,10 +171,8 @@
 	function draw () {
 		clearCanvas('#fff');
 
-		tabuleiro.forEach((row, y) => {
-			row.forEach((celula, x) => {
-				if (celula.wall) celula.show('black');
-			});
+		tabuleiro.forEach(row => {
+			row.forEach(celula => celula.wall && celula.draw(drawRect, 'black'));
 		});
 	};
 

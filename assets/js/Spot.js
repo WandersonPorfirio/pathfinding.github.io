@@ -1,7 +1,7 @@
 
 
 	class Spot  {
-		contructor (x, y, w) {
+		constructor (x, y, w) {
 			this.x = x;
 			this.y = y;
 			this.w = w;
@@ -13,6 +13,10 @@
 			this.wall = 0;
 			this.neighbors = [];
 			this.parent = undefined;
+		};
+
+		draw (drawMethod, color) {
+			drawMethod(this.x * this.w, this.y * this.w, this.w, this.w, color);
 		};
 
 		defineNeighbors (matriz) {
