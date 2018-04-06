@@ -56,8 +56,7 @@
 			let reserveX = 0, row = [];
 
 			while (reserveX < w) {
-				row.push(new Spot(reserveX, h, tileSize));
-				reserveX++;
+				row.push(new Spot(reserveX++, h, tileSize));
 			};
 
 			matriz.unshift(row);
@@ -139,8 +138,6 @@
 			};
 		};
 
-		// ctx.moveTo(from.x * from.w + (from.w * 0.5), from.y * from.w + (from.w * 0.5));
-		// ctx.lineTo(to.x * to.w + (to.w * 0.5), to.y * to.w + (to.w * 0.5));
 		lineSet(
 			{ x: from.x * from.w + (from.w * 0.5), y: from.y * from.w + (from.w * 0.5) },
 			{ x: to.x * to.w + (to.w * 0.5), y: to.y * to.w + (to.w * 0.5) }
