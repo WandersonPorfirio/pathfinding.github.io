@@ -80,7 +80,7 @@
 			};
 		} while (barreiras_count > quantidade_barreiras(matriz));
 
-		return setEveryNeighbor(matriz);
+		return setNeighbors(matriz);
 	};
 
 
@@ -88,16 +88,16 @@
 		var quantidade_atual = 0;
 
 		matriz.forEach(row => {
-			quantidade_atual += row.filter(celula => celula.wall).length; // quantos elementos em cada linha
+			quantidade_atual += row.filter(cell => cell.wall).length; // quantos elementos em cada linha
 		});
 
 		return quantidade_atual;
 	};
 
 
-	function setEveryNeighbor (matriz) {
+	function setNeighbors (matriz) {
 		matriz.forEach(row => {
-			row.forEach(celula => !celula.wall && celula.defineNeighbors(matriz));
+			row.forEach(cell => !cell.wall && cell.setNeighbors(matriz));
 		});
 
 		return matriz;
@@ -118,7 +118,7 @@
 	function drawParent (_el, color) {
 		ctx.beginPath();
 		ctx.strokeStyle = color;
-		[start, end, _el].forEach(celula => celula.draw(drawRect, color));
+		[start, end, _el].forEach(cell => cell.draw(drawRect, color));
 		while (_el.parent) {
 			_el = route(_el, _el.parent);
 		};
@@ -169,7 +169,7 @@
 		clearCanvas('#fff');
 
 		tabuleiro.forEach(row => {
-			row.forEach(celula => celula.wall && celula.draw(drawRect, 'black'));
+			row.forEach(cell => cell.wall && cell.draw(drawRect, 'black'));
 		});
 	};
 
@@ -182,6 +182,7 @@
 
 			if (currentNode === end) {
 				openSet = [];
+				setTimeout(inicializar_busca, 10000);
 				return drawParent(currentNode, 'green');
 			};
 

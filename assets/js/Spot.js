@@ -19,7 +19,7 @@
 			drawMethod(this.x * this.w, this.y * this.w, this.w, this.w, color);
 		};
 
-		defineNeighbors (matriz) {
+		setNeighbors (matriz) {
 			let x = this.x,
 				y = this.y, neighbor;
 
@@ -27,8 +27,12 @@
 				if (!matriz[y + i]) continue;
 				for (let j = -1; j <= 1; j++) {
 					neighbor = matriz[y + i][x + j];
-					if (!neighbor || (i % 2) && (j % 2) || neighbor.wall) continue;
-					if (!(!j && !i)) this.neighbors.push(neighbor);
+					
+					if (!neighbor || neighbor.wall || !i && !j || i % 2 && j % 2) {
+						continue;
+					};
+					
+					this.neighbors.push(neighbor);
 				};
 			};
 		};
