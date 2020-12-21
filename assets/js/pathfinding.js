@@ -85,14 +85,8 @@
 
 
 	function quantidade_barreiras (matriz) {
-		var quantidade_atual = 0;
-
-		matriz.forEach(row => {
-			quantidade_atual += row.filter(cell => cell.wall).length; // quantos elementos em cada linha
-		});
-
-		return quantidade_atual;
-	};
+		return matriz.reduce((acc, row) => acc + row.filter(cell => cell.wall).length, 0);
+	}
 
 
 	function setNeighbors (matriz) {
