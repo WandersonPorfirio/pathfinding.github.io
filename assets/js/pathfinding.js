@@ -132,10 +132,15 @@
 			};
 		};
 
-		lineSet(
-			{ x: from.x * from.w + (from.w * 0.5), y: from.y * from.w + (from.w * 0.5) },
-			{ x: to.x * to.w + (to.w * 0.5), y: to.y * to.w + (to.w * 0.5) }
-		);
+		let halfSize = tileSize * .5;
+
+		lineSet({
+			x: from.x * from.w + halfSize,
+			y: from.y * from.w + halfSize
+		}, {
+			x: to.x * to.w + halfSize,
+			y: to.y * to.w + halfSize
+		});
 
 		return to;
 	};
